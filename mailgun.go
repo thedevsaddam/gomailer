@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -119,6 +120,18 @@ func (m *mailgun) AttachmentFile(file string) Mailer {
 // AttachmentInlineFile set email inline attachment
 func (m *mailgun) AttachmentInlineFile(file string) Mailer {
 	m.attachmentInlineFiles = append(m.attachmentInlineFiles, file)
+	return m
+}
+
+// AttachmentReader set email attachments
+func (m *mailgun) AttachmentReader(file string, r io.Reader) Mailer {
+	log.Println("gomailer: not implemented")
+	return m
+}
+
+// AttachmentInlineReader set email inline attachment
+func (m *mailgun) AttachmentInlineReader(file string, r io.Reader) Mailer {
+	log.Println("gomailer: not implemented")
 	return m
 }
 
