@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -114,6 +116,18 @@ func (p *postmark) AttachmentFile(file string) Mailer {
 // AttachmentInlineFile set email inline attachment
 func (p *postmark) AttachmentInlineFile(file string) Mailer {
 	p.attachmentInlineFiles = append(p.attachmentInlineFiles, file)
+	return p
+}
+
+// AttachmentReader set email attachments
+func (p *postmark) AttachmentReader(file string, r io.Reader) Mailer {
+	log.Println("gomailer: not implemented")
+	return p
+}
+
+// AttachmentInlineReader set email inline attachment
+func (p *postmark) AttachmentInlineReader(file string, r io.Reader) Mailer {
+	log.Println("gomailer: not implemented")
 	return p
 }
 

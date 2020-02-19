@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -21,21 +22,27 @@ const (
 )
 
 type (
+	readerInfo struct {
+		size int64
+		r    io.Reader
+	}
 	// sendgrid describes a sendgrid type
 	sendgrid struct {
-		c                     client
-		configs               Configs
-		from                  address
-		toList                []address
-		ccList                []address
-		bccList               []address
-		replyTo               address
-		subject               string
-		bodyHTML              string
-		bodyText              string
-		attachmentFiles       []string
-		attachmentInlineFiles []string
-		attachments           []attachment
+		c                       client
+		configs                 Configs
+		from                    address
+		toList                  []address
+		ccList                  []address
+		bccList                 []address
+		replyTo                 address
+		subject                 string
+		bodyHTML                string
+		bodyText                string
+		attachmentFiles         []string
+		attachmentInlineFiles   []string
+		attachmentReaders       map[string]readerInfo
+		attachmentInlineReaders map[string]readerInfo
+		attachments             []attachment
 	}
 
 	sendgridContent struct {
@@ -113,6 +120,20 @@ func (s *sendgrid) AttachmentInlineFile(file string) Mailer {
 	return s
 }
 
+// AttachmentReader set email attachments
+func (s *sendgrid) AttachmentReader(file string, r io.Reader) Mailer {
+	s.attachmentReaders = make(map[string]readerInfo)
+	s.attachmentReaders[file] = readerInfo{r: r}
+	return s
+}
+
+// AttachmentInlineReader set email inline attachment
+func (s *sendgrid) AttachmentInlineReader(file string, r io.Reader) Mailer {
+	s.attachmentInlineReaders = make(map[string]readerInfo)
+	s.attachmentInlineReaders[file] = readerInfo{r: r}
+	return s
+}
+
 // Send process an email sending
 func (s *sendgrid) Send() error {
 	// verify params for sending email
@@ -144,10 +165,32 @@ func (s *sendgrid) Send() error {
 		s.attachments = append(s.attachments, a)
 	}
 
+	// build attachment
+	for f, r := range s.attachmentReaders {
+		a := attachment{}
+		err := a.ReadFromReader(f, r)
+		if err != nil {
+			return err
+		}
+		a.Disposition = "attachment"
+		s.attachments = append(s.attachments, a)
+	}
+
 	// build attachment inine
 	for _, f := range s.attachmentInlineFiles {
 		a := attachment{}
 		err := a.ReadFromFile(f)
+		if err != nil {
+			return err
+		}
+		a.Disposition = "inline"
+		s.attachments = append(s.attachments, a)
+	}
+
+	// build attachment inine
+	for f, r := range s.attachmentInlineReaders {
+		a := attachment{}
+		err := a.ReadFromReader(f, r)
 		if err != nil {
 			return err
 		}
