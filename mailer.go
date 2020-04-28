@@ -2,9 +2,11 @@
 package gomailer
 
 import (
+	"bytes"
 	b64 "encoding/base64"
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"mime"
 	"path/filepath"
@@ -42,6 +44,7 @@ type (
 		FileName    string `json:"filename"`
 		ContentID   string `json:"content_id"`
 		Disposition string `json:"disposition,omitempty"`
+		Size        int64  `json:"-"`
 	}
 
 	// Configs represents the configurations
@@ -83,6 +86,10 @@ type (
 		AttachmentFile(file string) Mailer
 		// AttachmentInlineFile sets email inline attachments from file name on disk
 		AttachmentInlineFile(file string) Mailer
+		// AttachmentReader sets email attachments from file name and reader
+		AttachmentReader(file string, r io.Reader) Mailer
+		// AttachmentInlineFile sets email inline attachments from file name and reader
+		AttachmentInlineReader(file string, r io.Reader) Mailer
 		// Send process an email sending
 		Send() error
 	}
@@ -107,6 +114,30 @@ func (a *attachment) ReadFromFile(path string) error {
 	mType := mime.TypeByExtension(ext)
 	// get file name
 	fileName := filepath.Base(path)
+	// modify the receiver
+	a.Type = mType
+	a.Content = sEnc
+	a.FileName = fileName
+	a.ContentID = fileName
+	return nil
+}
+
+// ReadFromFile read from valid file path
+// encode the file into base64
+func (a *attachment) ReadFromReader(f string, sri readerInfo) error {
+	b := &bytes.Buffer{}
+	size, err := io.Copy(b, sri.r)
+	if err != nil {
+		return err
+	}
+	a.Size = size
+	// encode file into base64
+	sEnc := b64.StdEncoding.EncodeToString(b.Bytes())
+	//extract mime type from file
+	ext := filepath.Ext(f)
+	mType := mime.TypeByExtension(ext)
+	// get file name
+	fileName := filepath.Base(f)
 	// modify the receiver
 	a.Type = mType
 	a.Content = sEnc

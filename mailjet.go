@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 )
@@ -117,6 +119,18 @@ func (m *mailjet) AttachmentFile(file string) Mailer {
 // AttachmentInlineFile set email inline attachment
 func (m *mailjet) AttachmentInlineFile(file string) Mailer {
 	m.attachmentInlineFiles = append(m.attachmentInlineFiles, file)
+	return m
+}
+
+// AttachmentReader set email attachments
+func (m *mailjet) AttachmentReader(file string, r io.Reader) Mailer {
+	log.Println("gomailer: not implemented")
+	return m
+}
+
+// AttachmentInlineReader set email inline attachment
+func (m *mailjet) AttachmentInlineReader(file string, r io.Reader) Mailer {
+	log.Println("gomailer: not implemented")
 	return m
 }
 
