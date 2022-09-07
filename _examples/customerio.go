@@ -9,9 +9,9 @@ import (
 func main() {
 	// new mailer
 	c := mailer.Configs{
-		ServerToken: "Your postmarkapp server token",
+		APIKey: "Your customer.io api key",
 	}
-	m, err := mailer.New(mailer.POSTMARKAPP, c)
+	m, err := mailer.New(mailer.CUSTOMERIO, c)
 	checkError(err)
 
 	m.From("John Doe", "john@mail.com")
@@ -23,7 +23,7 @@ func main() {
 
 	m.Subject("This is an urgent email")
 	// m.BodyText("email with attachment") // if you have plain text body
-	m.BodyHTML("<html>Inline image here: <img src='cid:a.png'></html>")
+	m.BodyHTML("<html>Hello from good looking html email</html>")
 	m.AttachmentFile("a.png")
 
 	checkError(err)

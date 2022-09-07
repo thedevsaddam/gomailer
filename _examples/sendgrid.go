@@ -33,6 +33,6 @@ func main() {
 
 func checkError(err error) {
 	if err != nil {
-		log.Println(err)
+		log.Fatal(err)
 	}
 }

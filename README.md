@@ -76,6 +76,7 @@ m.To("name", "email").Cc("name", "email").Bcc("name", "email").Bcc("name", "emai
 - [x] Sendgrid
 - [x] Postmark
 - [x] Mailjet
+- [x] CustomerIO
 - [ ] Elasticmail
 - [ ] Jangomail
 - [ ] Leadersend
