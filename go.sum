@@ -1,0 +1,4 @@
+github.com/customerio/go-customerio/v3 v3.4.1 h1:1oHINenBCiiYCd0gm6nzNuEtvS05qa8zF6HbFelKgho=
+github.com/customerio/go-customerio/v3 v3.4.1/go.mod h1:V7VZutpfHNViX7nuJ+u+pe5bW/6FSKmYdasDM1XrNTM=
+github.com/google/uuid v1.3.0 h1:t6JiXgmwXMjEs8VusXIJk2BXHsn+wx8BZdTaoZ5fu7I=
+github.com/google/uuid v1.3.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=

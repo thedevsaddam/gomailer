@@ -25,6 +25,8 @@ const (
 	POSTMARK
 	// MAILJET driver
 	MAILJET
+	// CUSTOMERIO driver
+	CUSTOMERIO
 )
 
 type (
@@ -180,6 +182,14 @@ func mailFactory(d driver, c Configs) (Mailer, error) {
 
 	case POSTMARK:
 		return &postmark{
+			configs: c,
+			c: client{
+				timeOut: c.RequestTimeout,
+			},
+		}, nil
+
+	case CUSTOMERIO:
+		return &customerio{
 			configs: c,
 			c: client{
 				timeOut: c.RequestTimeout,
